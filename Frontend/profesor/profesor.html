@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIVAN - Panel de Profesor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F7F4F0] min-h-screen text-stone-800">
+
+    <!-- Barra de Navegación / Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-10 shadow-xs">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-semibold tracking-widest text-[#A1887F] uppercase bg-[#EFEBE9] px-3 py-1 rounded-full">SIVAN</span>
+                <h1 class="text-lg font-semibold text-stone-800">Panel de Profesor</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <p id="userName" class="text-sm font-medium text-stone-700">Profesor</p>
+                    <p class="text-xs text-stone-400">Rol: Docente</p>
+                </div>
+                <button onclick="cerrarSesion()" class="bg-[#EFEBE9] hover:bg-[#E0D7D5] text-[#8D6E63] text-xs font-medium px-4 py-2 rounded-xl transition-all cursor-pointer">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        
+        <!-- Tarjeta de Registro de Asistencia -->
+        <div class="bg-white p-8 rounded-3xl shadow-xl shadow-stone-200/50 border border-stone-100">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="p-2.5 bg-[#EFEBE9] text-[#8D6E63] rounded-2xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold text-stone-800">Pase de Lista Diario</h2>
+                    <p class="text-xs text-stone-400">Registra la asistencia de tus alumnos por grupo y sesión</p>
+                </div>
+            </div>
+
+            <form id="formAsistencia" class="space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1.5 uppercase tracking-wider">ID del Grupo</label>
+                        <input type="number" id="grupoId" placeholder="Ej: 1" required
+                            class="w-full px-4 py-3 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Fecha de la Sesión</label>
+                        <input type="date" id="fechaSesion" required
+                            class="w-full px-4 py-3 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
+                    </div>
+                </div>
+
+                <!-- Simulación de lista de alumnos o carga rápida -->
+                <div class="border border-stone-200 rounded-2xl p-4 bg-[#FAFAFA]">
+                    <p class="text-xs font-medium text-stone-600 uppercase tracking-wider mb-2">Instrucciones</p>
+                    <p class="text-xs text-stone-500">Ingresa el ID del grupo y la fecha correspondiente. El sistema registrará la sesión para los alumnos inscritos vinculados a este docente.</p>
+                </div>
+
+                <div id="msgAsistencia" class="hidden text-xs p-3 rounded-xl text-center font-medium"></div>
+
+                <button type="submit"
+                    class="w-full bg-[#8D6E63] hover:bg-[#795548] text-white font-medium py-3.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-[#8D6E63]/20 cursor-pointer">
+                    <span>Guardar Asistencias de la Sesión</span>
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- Script de Integración -->
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        const token = localStorage.getItem('token');
+        const nombre = localStorage.getItem('nombre');
+        const rol = localStorage.getItem('rol_id');
+
+        // Validar que el usuario esté autenticado y sea Profesor (rol_id 2)
+        if (!token || rol !== '2') {
+            alert('Acceso restringido. Por favor inicia sesión como Profesor.');
+            window.location.href = '../index.html';
+        } else if (nombre) {
+            document.getElementById('userName').textContent = nombre;
+        }
+
+        // Poner la fecha actual por defecto en el input de fecha
+        document.getElementById('fechaSesion').valueAsDate = new Date();
+
+        function cerrarSesion() {
+            localStorage.clear();
+            window.location.href = '../index.html';
+        }
+
+        // Enviar Asistencia
+        document.getElementById('formAsistencia').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msgDiv = document.getElementById('msgAsistencia');
+            msgDiv.classList.add('hidden');
+
+            const grupoId = parseInt(document.getElementById('grupoId').value);
+            const fecha = document.getElementById('fechaSesion').value;
+
+            // Nota: Ajusta la estructura del JSON según el esquema que definiste en tu router de profesor en FastAPI
+            const payload = {
+                grupo_id: grupoId,
+                fecha: fecha
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/api/profesor/registrar-asistencia`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Error al registrar asistencia");
+
+                msgDiv.className = "text-xs p-3 rounded-xl text-center font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+                msgDiv.textContent = data.mensaje || "¡Asistencias registradas correctamente!";
+                msgDiv.classList.remove('hidden');
+            } catch (err) {
+                msgDiv.className = "text-xs p-3 rounded-xl text-center font-medium bg-red-50 text-red-600 border border-red-200";
+                msgDiv.textContent = err.message;
+                msgDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

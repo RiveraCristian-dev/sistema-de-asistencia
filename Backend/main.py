@@ -37,21 +37,27 @@ def login_para_obtener_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    """
-    Recibe el email (en el campo username) y password del usuario.
-    Valida las credenciales y devuelve un token de acceso JWT.
-    """
+    print(f"--> Intentando iniciar sesión con correo: '{form_data.username}'")
+    
     # Buscamos al usuario por su email
     usuario = db.query(Usuario).filter(Usuario.email == form_data.username).first()
     
-    if not usuario or not verificar_password(form_data.password, usuario.password_hash):
+    if not usuario:
+        print("--> ¡ERROR: El usuario no existe en la base de datos!")
+        raise HTTPException(status_code=401, detail="Correo o contraseña incorrectos")
+    
+    print(f"--> Usuario encontrado: ID {usuario.id}, Rol: {usuario.rol_id}")
+    
+    password_valida = verificar_password(form_data.password, usuario.password_hash)
+    print(f"--> ¿La contraseña coincide?: {password_valida}")
+    
+    if not password_valida:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Correo o contraseña incorrectos",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Creamos el token JWT incluyendo el correo en el 'sub'
     access_token = crear_access_token(data={"sub": usuario.email})
     
     return {

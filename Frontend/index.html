@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIVAN - Iniciar Sesión</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F7F4F0] min-h-screen flex items-center justify-center p-4">
+
+    <!-- Tarjeta Principal Minimalista -->
+    <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-xl shadow-stone-200/50 border border-stone-100">
+        
+        <!-- Encabezado -->
+        <div class="text-center mb-8">
+            <span class="text-xs font-semibold tracking-widest text-[#A1887F] uppercase bg-[#EFEBE9] px-3 py-1 rounded-full">SIVAN System</span>
+            <h1 class="text-2xl font-semibold text-stone-800 mt-3">Bienvenido de nuevo</h1>
+            <p class="text-sm text-stone-500 mt-1">Ingresa tus credenciales para continuar</p>
+        </div>
+
+        <!-- Formulario de Login -->
+        <form id="loginForm" class="space-y-5">
+            
+            <!-- Campo Correo / Usuario -->
+            <div>
+                <label class="block text-xs font-medium text-stone-600 mb-1.5 uppercase tracking-wider">Correo Electrónico</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                        </svg>
+                    </span>
+                    <input type="email" id="email" required 
+                        class="w-full pl-11 pr-4 py-3 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F] focus:bg-white transition-all"
+                        placeholder="ejemplo@universidad.edu">
+                </div>
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div>
+                <label class="block text-xs font-medium text-stone-600 mb-1.5 uppercase tracking-wider">Contraseña</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </span>
+                    <input type="password" id="password" required 
+                        class="w-full pl-11 pr-4 py-3 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F] focus:bg-white transition-all"
+                        placeholder="••••••••">
+                </div>
+            </div>
+
+            <!-- Mensaje de Error -->
+            <div id="errorMsg" class="hidden text-xs text-red-600 bg-red-50 p-3 rounded-xl text-center font-medium"></div>
+
+            <!-- Botón Entrar (Café Claro / Estilo Terroso) -->
+            <button type="submit" 
+                class="w-full mt-2 bg-[#8D6E63] hover:bg-[#795548] text-white font-medium py-3.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-[#8D6E63]/20 cursor-pointer">
+                <span>Entrar al Sistema</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </button>
+        </form>
+
+        <!-- Pie de tarjeta -->
+        <div class="text-center mt-6">
+            <p class="text-xs text-stone-400">SIVAN • Control y Prevención de Asistencias</p>
+        </div>
+    </div>
+
+    <!-- Script de Autenticación con FastAPI -->
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMsg');
+
+            errorDiv.classList.add('hidden');
+
+            try {
+                // FastAPI OAuth2PasswordRequestForm requiere x-www-form-urlencoded
+                const formData = new URLSearchParams();
+                formData.append('username', email);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_URL}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || "Error al iniciar sesión");
+                }
+
+                // Guardar token y datos del usuario en localStorage
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('rol_id', data.rol_id);
+                localStorage.setItem('nombre', data.nombre);
+
+                // Redireccionar según el rol (1: Admin, 2: Profesor, 3: Alumno)
+                alert(`¡Bienvenido, ${data.nombre}!`);
+                if (data.rol_id === 1) {
+                    window.location.href = './admin/admin.html';
+                } else if (data.rol_id === 2) {
+                    window.location.href = './profesor/profesor.html';
+                } else {
+                    window.location.href = './alumno/alumno.html';
+                }
+
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
