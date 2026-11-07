@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 # CONFIGURACIÓN DE CONEXIÓN
 # -----------------------------------------------------------------
 # 1. Desarrollo Local (MySQL):
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:TU_PASSWORD@localhost/asistencia"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Mysqldb20@localhost/asistencia"
 
 # 2. Producción / Migración futura (Neon PostgreSQL):
 # Descomenta la siguiente línea cuando migres a Neon Postgres y ajusta tus credenciales:
