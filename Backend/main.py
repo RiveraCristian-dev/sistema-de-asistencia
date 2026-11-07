@@ -1,6 +1,9 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from Backend.database import engine, Base
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+from Backend.database import engine, Base, get_db
+from Backend.models import Usuario
+from Backend.auth import verificar_password, crear_access_token
 from Backend.routers import alumnos, profesores, admin
 
 # Creamos las tablas en la base de datos automáticamente si no existen
@@ -12,10 +15,10 @@ app = FastAPI(
     description="API REST para el control y prevención de faltas escolares con FastAPI y MySQL/PostgreSQL"
 )
 
-# Configuración de CORS (permite la comunicación con el frontend HTML/JS)
+from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción puedes restringirlo a tu dominio
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,6 +28,39 @@ app.add_middleware(
 app.include_router(alumnos.router, prefix="/api/alumnos", tags=["Alumnos"])
 app.include_router(profesores.router, prefix="/api/profesores", tags=["Profesores"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Administrador"])
+
+# -----------------------------------------------------------------
+# ENDPOINT DE AUTENTICACIÓN (LOGIN)
+# -----------------------------------------------------------------
+@app.post("/token", tags=["Autenticación"])
+def login_para_obtener_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    """
+    Recibe el email (en el campo username) y password del usuario.
+    Valida las credenciales y devuelve un token de acceso JWT.
+    """
+    # Buscamos al usuario por su email
+    usuario = db.query(Usuario).filter(Usuario.email == form_data.username).first()
+    
+    if not usuario or not verificar_password(form_data.password, usuario.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Correo o contraseña incorrectos",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Creamos el token JWT incluyendo el correo en el 'sub'
+    access_token = crear_access_token(data={"sub": usuario.email})
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "usuario_id": usuario.id,
+        "nombre": f"{usuario.nombre} {usuario.apellido}",
+        "rol_id": usuario.rol_id
+    }
 
 @app.get("/")
 def read_root():
