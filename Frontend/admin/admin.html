@@ -4,23 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIVAN - Panel de Administración</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 <body class="bg-[#F7F4F0] min-h-screen text-stone-800">
 
-    <!-- Barra de Navegación / Header -->
+    <!-- Header -->
     <header class="bg-white border-b border-stone-200 sticky top-0 z-10 shadow-xs">
         <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <span class="text-xs font-semibold tracking-widest text-[#A1887F] uppercase bg-[#EFEBE9] px-3 py-1 rounded-full">SIVAN</span>
                 <h1 class="text-lg font-semibold text-stone-800">Panel de Administración</h1>
             </div>
-            
             <div class="flex items-center space-x-4">
                 <div class="text-right hidden sm:block">
                     <p id="userName" class="text-sm font-medium text-stone-700">Administrador</p>
@@ -33,150 +29,175 @@
         </div>
     </header>
 
-    <!-- Contenido Principal -->
+    <!-- Contenido -->
     <main class="max-w-6xl mx-auto px-6 py-8">
-        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             <!-- TARJETA 1: Crear Nuevo Grupo -->
             <div class="bg-white p-7 rounded-3xl shadow-xl shadow-stone-200/50 border border-stone-100 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center space-x-3 mb-5">
-                        <div class="p-2.5 bg-[#EFEBE9] text-[#8D6E63] rounded-2xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-semibold text-stone-800">Crear Nuevo Grupo</h2>
-                            <p class="text-xs text-stone-400">Asigna materia, periodo y docente</p>
-                        </div>
-                    </div>
+                    <h2 class="text-lg font-semibold text-stone-800 mb-1">Crear Nuevo Grupo</h2>
+                    <p class="text-xs text-stone-400 mb-5">Define los datos generales y el docente asignado</p>
 
                     <form id="formCrearGrupo" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Nombre del Grupo</label>
-                            <input type="text" id="nombreGrupo" placeholder="Ej: G-501" required
+                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Nombre del Grupo (3 dígitos)</label>
+                            <input type="text" id="nombreGrupo" placeholder="Ej: 151" maxlength="3" pattern="\d{3}" required
                                 class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
                         </div>
+
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">ID Materia</label>
-                                <input type="number" id="materiaId" placeholder="Ej: 1" required
+                                <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Semestre</label>
+                                <select id="semestre" required
                                     class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
+                                    <option value="">Selecciona...</option>
+                                    <option value="1">1er Semestre</option>
+                                    <option value="2">2do Semestre</option>
+                                    <option value="3">3er Semestre</option>
+                                    <option value="4">4to Semestre</option>
+                                    <option value="5">5to Semestre</option>
+                                    <option value="6">6to Semestre</option>
+                                </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">ID Periodo</label>
-                                <input type="number" id="periodoId" placeholder="Ej: 1" required
+                                <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Parcial (1 - 3)</label>
+                                <select id="periodoParcial" required
                                     class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
+                                    <option value="1">Parcial 1</option>
+                                    <option value="2">Parcial 2</option>
+                                    <option value="3">Parcial 3</option>
+                                </select>
                             </div>
                         </div>
+
                         <div>
-                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">ID Profesor Asignado</label>
-                            <input type="number" id="profesorId" placeholder="Ej: 2" required
+                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Materia</label>
+                            <select id="selectMateria" required
                                 class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
+                                <option value="">Cargando materias...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Profesor Asignado</label>
+                            <select id="selectProfesor" required
+                                class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
+                                <option value="">Cargando profesores...</option>
+                            </select>
                         </div>
 
                         <div id="msgGrupo" class="hidden text-xs p-3 rounded-xl text-center font-medium"></div>
 
                         <button type="submit"
-                            class="w-full mt-2 bg-[#8D6E63] hover:bg-[#795548] text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-md shadow-[#8D6E63]/20 cursor-pointer">
-                            <span>Registrar Grupo</span>
+                            class="w-full mt-2 bg-[#8D6E63] hover:bg-[#795548] text-white font-medium py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer">
+                            Registrar Grupo
                         </button>
                     </form>
                 </div>
             </div>
 
-            <!-- TARJETA 2: Inscribir Alumno en Grupo -->
+            <!-- TARJETA 2: Inscribir Alumno -->
             <div class="bg-white p-7 rounded-3xl shadow-xl shadow-stone-200/50 border border-stone-100 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center space-x-3 mb-5">
-                        <div class="p-2.5 bg-[#EFEBE9] text-[#8D6E63] rounded-2xl">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-semibold text-stone-800">Inscribir Alumno</h2>
-                            <p class="text-xs text-stone-400">Vincula a un estudiante con un grupo</p>
-                        </div>
-                    </div>
+                    <h2 class="text-lg font-semibold text-stone-800 mb-1">Inscribir Alumno</h2>
+                    <p class="text-xs text-stone-400 mb-5">Vincula la matrícula escolar al grupo</p>
 
                     <form id="formInscribirAlumno" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">ID del Alumno</label>
-                            <input type="number" id="alumnoId" placeholder="Ej: 3" required
+                            <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">Matrícula del Alumno</label>
+                            <input type="text" id="alumnoMatricula" placeholder="Ej: 34240013" required
                                 class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wider">ID del Grupo</label>
-                            <input type="number" id="grupoIdInsc" placeholder="Ej: 1" required
+                            <input type="number" id="grupoIdInsc" placeholder="Ej: 151 o ID de grupo" required
                                 class="w-full px-4 py-2.5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#A1887F]">
                         </div>
 
                         <div id="msgInscripcion" class="hidden text-xs p-3 rounded-xl text-center font-medium"></div>
 
                         <button type="submit"
-                            class="w-full mt-2 bg-[#8D6E63] hover:bg-[#795548] text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-md shadow-[#8D6E63]/20 cursor-pointer">
-                            <span>Inscribir Alumno</span>
+                            class="w-full mt-2 bg-[#8D6E63] hover:bg-[#795548] text-white font-medium py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer">
+                            Inscribir Alumno
                         </button>
                     </form>
                 </div>
             </div>
 
         </div>
-
     </main>
 
-    <!-- Script de Integración con Backend -->
+    <!-- Script -->
     <script>
         const API_URL = "http://127.0.0.1:8000";
         const token = localStorage.getItem('token');
-        const nombre = localStorage.getItem('nombre');
         const rol = localStorage.getItem('rol_id');
 
-        // Validar que el usuario esté autenticado y sea Admin (rol_id 1)
         if (!token || rol !== '1') {
-            alert('Acceso restringido. Por favor inicia sesión como Administrador.');
-            window.location.href = 'index.html';
-        } else if (nombre) {
-            document.getElementById('userName').textContent = nombre;
+            alert('Acceso restringido.');
+            window.location.href = '../index.html';
         }
 
         function cerrarSesion() {
             localStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         }
+
+        // Cargar listas desplegables al abrir la vista
+        async function cargarCatalogos() {
+            try {
+                // Cargar Materias
+                const resMat = await fetch(`${API_URL}/api/admin/materias`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const materias = await resMat.json();
+                const selectMat = document.getElementById('selectMateria');
+                selectMat.innerHTML = '<option value="">Selecciona una materia...</option>';
+                materias.forEach(m => {
+                    selectMat.innerHTML += `<option value="${m.id}">${m.nombre}</option>`;
+                });
+
+                // Cargar Profesores
+                const resProf = await fetch(`${API_URL}/api/admin/profesores`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const profesores = await resProf.json();
+                const selectProf = document.getElementById('selectProfesor');
+                selectProf.innerHTML = '<option value="">Selecciona un profesor...</option>';
+                profesores.forEach(p => {
+                    selectProf.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                });
+            } catch (err) {
+                console.error("Error cargando catálogos:", err);
+            }
+        }
+
+        cargarCatalogos();
 
         // Crear Grupo
         document.getElementById('formCrearGrupo').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgDiv = document.getElementById('msgGrupo');
-            msgDiv.classList.add('hidden');
-
+            
             const payload = {
                 nombre: document.getElementById('nombreGrupo').value,
-                materia_id: parseInt(document.getElementById('materiaId').value),
-                periodo_id: parseInt(document.getElementById('periodoId').value),
-                profesor_id: parseInt(document.getElementById('profesorId').value)
+                semestre: parseInt(document.getElementById('semestre').value),
+                periodo_parcial: parseInt(document.getElementById('periodoParcial').value),
+                materia_id: parseInt(document.getElementById('selectMateria').value),
+                profesor_id: parseInt(document.getElementById('selectProfesor').value)
             };
 
             try {
                 const res = await fetch(`${API_URL}/api/admin/crear-grupo`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || "Error al crear grupo");
 
                 msgDiv.className = "text-xs p-3 rounded-xl text-center font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
-                msgDiv.textContent = `¡Grupo "${data.nombre_grupo}" creado exitosamente (ID: ${data.grupo_id})!`;
+                msgDiv.textContent = `¡Grupo "${data.nombre_grupo}" registrado con éxito!`;
                 msgDiv.classList.remove('hidden');
                 document.getElementById('formCrearGrupo').reset();
+                cargarCatalogos();
             } catch (err) {
                 msgDiv.className = "text-xs p-3 rounded-xl text-center font-medium bg-red-50 text-red-600 border border-red-200";
                 msgDiv.textContent = err.message;
@@ -184,37 +205,46 @@
             }
         });
 
-        // Inscribir Alumno
+        // Inscribir Alumno por Matrícula
         document.getElementById('formInscribirAlumno').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgDiv = document.getElementById('msgInscripcion');
-            msgDiv.classList.add('hidden');
-
+            
             const payload = {
-                alumno_id: parseInt(document.getElementById('alumnoId').value),
+                matricula: document.getElementById('alumnoMatricula').value, // Usando la matrícula en vez de ID numérico interno
                 grupo_id: parseInt(document.getElementById('grupoIdInsc').value)
             };
 
             try {
                 const res = await fetch(`${API_URL}/api/admin/inscribir-alumno`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || "Error al inscribir alumno");
 
                 msgDiv.className = "text-xs p-3 rounded-xl text-center font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
-                msgDiv.textContent = data.mensaje;
+                msgDiv.textContent = data.mensaje || "¡Alumno inscrito correctamente!";
                 msgDiv.classList.remove('hidden');
                 document.getElementById('formInscribirAlumno').reset();
             } catch (err) {
                 msgDiv.className = "text-xs p-3 rounded-xl text-center font-medium bg-red-50 text-red-600 border border-red-200";
-                msgDiv.textContent = err.message;
+                
+                // Si FastAPI devuelve un error de validación (422), viene como un arreglo JSON
+                let mensajeError = err.message;
+                try {
+                    const errorObj = JSON.parse(err.message);
+                    if (Array.isArray(errorObj.detail)) {
+                        mensajeError = errorObj.detail.map(e => `${e.loc[e.loc.length - 1]}: ${e.msg}`).join(', ');
+                    } else if (errorObj.detail) {
+                        mensajeError = errorObj.detail;
+                    }
+                } catch(e) {}
+
+                msgDiv.textContent = mensajeError;
                 msgDiv.classList.remove('hidden');
+                
             }
         });
     </script>
